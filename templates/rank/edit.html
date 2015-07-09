@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% load bootstrap %}
+
+{% block title %}イベントの編集{% endblock title %}
+
+{% block extrahead %}
+<script type="text/javascript">
+
+  var add_text_box_counter = 0;
+  function addBox(){
+    add_text_box_counter+=1;
+    var member = document.getElementById("text_box_zone");
+    var child_count = member.childNodes.length;
+    var element = document.createElement('input');
+    element.type = "text";
+    element.className=" form-control";
+    element.name = "member_add_" + add_text_box_counter;
+
+    member.appendChild(element);
+  }
+</script>
+{% endblock %}
+
+{% block content %}
+    <h3 class="page-header">イベントの編集</h3>
+
+    <form action="{% url 'rank:eventEdit' event_id=event_id %}" method="post" class="form-horizontal" role="form">
+      {% csrf_token %}
+      {{ event_form|bootstrap_horizontal }}
+
+      <div class="form-group">
+        <label class="control-label col-sm-2 col-lg-2 " for="id_name">個人名</label>
+        <div class=" col-sm-10 col-lg-10 " id="text_box_zone">
+        {% for member in members %}
+          <input class=" form-control" maxlength="100" name="member{{forloop.counter}}" type="text" value="{{member.member_name}}">
+        {% endfor %}
+        </div>
+      </div>
+          <input type="button" value="ほげ" onclick="addBox()"/>
+      <div class="form-group">
+        <div class="col-sm-offset-2 col-sm-10">
+          <button type="submit" class="btn btn-primary">変更</button>
+        </div>
+      </div>
+    </form>
+    <a href="{% url 'rank:eventList' %}" class="btn btn-default btn-sm">戻る</a>
+{% endblock content %}

@@ -1,0 +1,186 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+
+{% block title %}投票結果{% endblock title %}
+
+{% block extrahead %}
+    <style>
+        .y text {
+
+        }
+        .x text{
+            font: 10px sans-serif;
+        }
+
+        .axis path {
+        /*
+        fillとopacityで半透明な背景色。
+        */
+          fill: Aquamarine;
+          opacity: 0.1;
+          stroke: #000;
+          stroke-width: 1;
+          shape-rendering: crispEdges;
+        }
+
+        .axis line {
+          stroke: #d51616;
+          stroke-width: 1;
+          shape-rendering: crispEdges;
+        }
+
+        }
+
+    </style>
+    <script src="{% static 'js/d3.min.js' %}"></script>
+{% endblock %}
+
+
+{% block content %}
+<h3 class="page-header">投票結果
+  <a href="{% url 'rank:eventList' %}" class="btn btn-default btn-sm" style="margin-left:20px;">戻る</a>
+</h3>
+
+ <script>
+
+var dataset2 = [
+            {% for member in members %}
+              {名前:"{{member.member_name}}" ,点数:{{member.votes}}},
+            {%endfor%}
+                ];
+
+var size = getWindowSize();//画面サイズの取得
+var colorCategoryScale = d3.scale.category20();
+var margin = {top:30,right:20,bottom:100,left:150};
+    w = size[0] - margin.left - margin.right,
+    h = size[1] - margin.top - margin.bottom;
+
+
+// d3.extent()で、データの最大値と最小値が[最大値,最小値]で出る。
+var dataMax = d3.extent(dataset2,function(d){ return d["点数"]})[1];
+
+var svg = d3.select("body").append("svg")
+            .attr("width",size[0])
+            .attr("height",size[1])
+            .append("g")
+            .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+var xScale = d3.scale.linear()
+                     .domain([0,dataMax])
+                     .range([0, w-50]);
+
+var yScale = d3.scale.linear()
+                     .domain([0,dataset2.length])
+                     .range([0, h]);
+
+
+
+var bar = svg.selectAll("rect")
+   .data(dataset2)
+   .enter()
+   .append("rect");
+
+var barWidth = h/dataset2.length-0.03*h;//データ数と画面の幅を元に棒のサイズを設定
+
+
+/*
+    軸の描画処理
+*/
+var xAxis = d3.svg.axis()
+                .scale(xScale)
+                .orient("bottom")
+                .ticks(6)
+                .tickFormat(function(d){ return d+"点"; });
+
+
+var yAxis = d3.svg.axis()
+                .ticks(dataset2.length)
+                .scale(yScale)
+                .orient("left")
+                .tickSize(20, -w);
+
+svg.append("g")
+    .attr("class", "y axis")
+    .attr("id","y_axis")
+    .call(yAxis);
+
+svg.append("g")
+    .attr("class", "x axis")
+    .attr("transform", "translate(0," + h + ")")
+    .call(xAxis);
+
+
+
+
+/*
+    画面に棒グラフを描画する(アニメーション)
+*/
+bar.attr("y",function(d,i){ return i*(h/dataset2.length)+0.3*barWidth;})
+   .attr("x",function(d){ return 0;})
+   .attr("height",barWidth)
+   .attr("width",function(d){ return 0;})
+   .attr("fill",function(d,i){ return colorCategoryScale(i);});
+
+bar.transition()
+    .delay(400)
+    .duration(6000)
+    .ease("bouce")
+    .attr("y",function(d,i){ return i*(h/dataset2.length)+0.3*barWidth;})
+   .attr("x",function(d){ return 0;})
+   .attr("height",barWidth)
+   .attr("width",function(d){ return xScale(d["点数"]);})
+   .attr("fill",function(d,i){ return colorCategoryScale(i);});
+
+
+/*
+    名前の表示
+*/
+var elms = document.getElementById("y_axis").getElementsByClassName("tick");
+
+//クラス名を持つ要素数を[count]に代入する
+var elmsCount = elms.length;
+for(var i=0;i<elmsCount-1;i++){
+    var textElement = elms[i].children[1];
+    textElement.innerHTML = dataset2[i]["名前"];
+    textElement.y = "10";
+    textElement.style.fontSize = barWidth*0.3;
+    textElement.style.webkitTransform = "translate("+0.03*h+"px,"+0.045*h+"px)";
+}
+elms[elmsCount-1].children[1].innerHTML = "";
+
+
+
+/*
+    最もスコアの良かった棒グラフに対して星マークをつける（アニメーション）
+*/
+var svgImage = svg.selectAll("image").data(dataset2).enter().append("svg:image");
+
+    svgImage
+    .attr("x",function(d){ return xScale(d["点数"]);})
+    .attr("y",function(d,i){ return i*(h/dataset2.length)+0.3*barWidth;})
+    .attr("xlink:href", "http://www.wanpug.com/illust/illust2147.png")
+    .attr("width",0)
+    .attr("height",0);
+
+    svgImage
+    .transition()
+    .delay(6400)
+    .duration(600)
+    .attr("x",function(d){ return xScale(d["点数"]);})
+    .attr("y",function(d,i){ return i*(h/dataset2.length)+0.3*barWidth;})
+    .attr("xlink:href", "http://www.wanpug.com/illust/illust2147.png")
+    .attr("width",function(d){if(d["点数"]==dataMax){return barWidth;}else{return "0";}})
+    .attr("height",barWidth);
+
+/**
+    画面サイズを取得するためのメソッド
+*/
+function getWindowSize() {
+    var sW,sH;
+    sW = window.innerWidth;
+    sH = window.innerHeight;
+
+    return [sW-50,sH-50];
+}
+</script>
+{% endblock content %}

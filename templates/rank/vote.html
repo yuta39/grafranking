@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+{% load bootstrap %}
+
+{% block title %}投票{% endblock title %}
+
+{% block extrahead %}
+<link href="{% static 'css/bootstrap-select.min.css' %}" rel="stylesheet">
+<script src="{% static 'js/bootstrap-select.min.js' %}"></script>
+
+<script type="text/javascript">
+
+  var vote_point = 0;
+  var vote_point_array = [0,0,0,0,0,0,0,0,0,0,
+                          0,0,0,0,0,0,0,0,0,0,
+                          0,0,0,0,0,0,0,0,0,0];
+
+  $(window).on('load', function () {
+    $('.selectpicker').selectpicker({
+        'selectedText': 'cat'
+    });
+  });
+
+  {% for member in members %}
+      $(function($) {
+        $("#id_{{forloop.counter}}").change( function(){
+          var selectVal = $("#id_{{forloop.counter}}").val();
+          before_point = getBeforePoint({{member.id}},Number(selectVal));
+          vote_point -= before_point;
+          vote_point += Number(selectVal);
+          console.log(vote_point);
+          if(vote_point>5){
+            disabledSubmitButton();
+          }else{
+            abledSubmitButton();
+          }
+        });
+      });
+  {% endfor %}
+
+  function getBeforePoint(key,new_point){
+    before_point = vote_point_array[key-1];
+    vote_point_array[key-1] = new_point;
+    //console.log("getBeforePoint->" + vote_point_array)
+    return before_point
+  }
+
+  function disabledSubmitButton(){
+      var elementNodeReference = document.getElementById("id_submit");
+      elementNodeReference.disabled = true;
+      var errorMessage = document.getElementById("error_zone");
+      errorMessage.innerHTML = "点数を５点以内にをおさえてください";
+  }
+
+  function abledSubmitButton(){
+      var elementNodeReference = document.getElementById("id_submit");
+      elementNodeReference.disabled = false;
+      var errorMessage = document.getElementById("error_zone");
+      errorMessage.innerHTML = "";
+  }
+
+</script>
+
+<style>
+.bootstrap-select{
+  margin: 20px;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+    <h3 class="page-header">投票</h3>
+    <h3><font id="error_zone" color="#e01010"></font></h3>
+    <form action="{% url 'rank:eventVote' event_id=event_id %}" method="post" class="form-horizontal" role="form">
+      {% csrf_token %}
+      {% for member in members %}
+        <select id="id_{{forloop.counter}}" name="name_{{member.id}}" class="selectpicker">
+        <option value="0">{{member.member_name}}</option>
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+        <option value="4">4</option>
+        <option value="5">5</option>
+        </select>
+      {% endfor %}
+
+      <div class="form-group">
+        <div class="col-sm-offset-2 col-sm-10">
+          <button type="submit" class="btn btn-primary" id="id_submit">送信</button>
+        </div>
+      </div>
+    </form>
+    <a href="{% url 'rank:eventList' %}" class="btn btn-default btn-sm">戻る</a>
+{% endblock content %}

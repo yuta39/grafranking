@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% load bootstrap %}
+
+{% block title %}イベントの追加{% endblock title %}
+
+{% block extrahead %}
+<script type="text/javascript">
+
+  function addBox(){
+    var member = document.getElementById("text_box_zone");
+    var element = document.createElement('input');
+    element.type = "text";
+    element.className=" form-control";
+    element.name = "member";
+
+    member.appendChild(element);
+  }
+</script>
+{% endblock %}
+
+{% block content %}
+    <h3 class="page-header">イベントの追加</h3>
+    <form action="{% url 'rank:eventAdd' %}" method="post" class="form-horizontal" role="form">
+      {% csrf_token %}
+      {{ event_form|bootstrap_horizontal }}
+
+      <div class="form-group">
+        <label class="control-label col-sm-2 col-lg-2 " for="id_name">個人名</label>
+        <div class=" col-sm-10 col-lg-10 " id="text_box_zone">
+          <input class=" form-control" maxlength="100" name="member" type="text">
+        </div>
+    </div>
+    <img src="{{STATIC_URL}}/img/plus.gif" width="20" height="20"/>
+    <input type="button" value="ほげ" onclick="addBox()"/>
+
+      <div class="form-group">
+        <div class="col-sm-offset-2 col-sm-10">
+          <button type="submit" class="btn btn-primary">送信</button>
+        </div>
+      </div>
+    </form>
+    <a href="{% url 'rank:eventList' %}" class="btn btn-default btn-sm">戻る</a>
+{% endblock content %}
