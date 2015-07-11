@@ -51,7 +51,7 @@ var dataset2 = [
 
 var size = getWindowSize();//画面サイズの取得
 var colorCategoryScale = d3.scale.category20();
-var margin = {top:30,right:20,bottom:100,left:150};
+var margin = {top:size[1]*0.01,right:size[0]*0.02,bottom:size[1]*0.15,left:size[0]*0.1};
     w = size[0] - margin.left - margin.right,
     h = size[1] - margin.top - margin.bottom;
 

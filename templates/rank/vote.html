@@ -34,10 +34,9 @@
       $(function($) {
         $("#id_{{forloop.counter}}").change( function(){
           var selectVal = $("#id_{{forloop.counter}}").val();
-          before_point = getBeforePoint({{member.id}},Number(selectVal));
+          before_point = getBeforePoint({{forloop.counter}},Number(selectVal));
           vote_point -= before_point;
           vote_point += Number(selectVal);
-          console.log(vote_point);
           if(vote_point>5){
             disabledSubmitButton();
           }else{
