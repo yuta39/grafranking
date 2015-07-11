@@ -22,7 +22,10 @@
 {% endblock %}
 
 {% block content %}
-    <h3 class="page-header">イベントの編集</h3>
+    <h3 class="page-header">
+      イベントの編集
+      <a href="{% url 'rank:eventList' %}" class="btn btn-default btn-sm" style="margin-left:20px;">戻る</a>
+    </h3>
 
     <form action="{% url 'rank:eventEdit' event_id=event_id %}" method="post" class="form-horizontal" role="form">
       {% csrf_token %}
@@ -36,12 +39,12 @@
         {% endfor %}
         </div>
       </div>
-          <input type="button" value="ほげ" onclick="addBox()"/>
+
       <div class="form-group">
         <div class="col-sm-offset-2 col-sm-10">
+          <button class="btn btn-default btn-sm" onclick="addBox()">参加者の追加</button>
           <button type="submit" class="btn btn-primary">変更</button>
         </div>
       </div>
     </form>
-    <a href="{% url 'rank:eventList' %}" class="btn btn-default btn-sm">戻る</a>
 {% endblock content %}

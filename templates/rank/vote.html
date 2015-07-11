@@ -15,6 +15,15 @@
                           0,0,0,0,0,0,0,0,0,0,
                           0,0,0,0,0,0,0,0,0,0];
 
+
+  /*ページが読み込まれたときに実行*/
+  window.onload = function(){
+    margin_px = (window.parent.screen.width)/6;
+    var elementNodeReference = document.getElementById("id_submit");
+    elementNodeReference.style.width = "220px";
+    elementNodeReference.style.margin = "20px";
+  }
+
   $(window).on('load', function () {
     $('.selectpicker').selectpicker({
         'selectedText': 'cat'
@@ -65,11 +74,17 @@
 .bootstrap-select{
   margin: 20px;
 }
+.col-sm-offset-2{
+  margin-top:20px;
+}
 </style>
 {% endblock %}
 
 {% block content %}
-    <h3 class="page-header">投票</h3>
+    <h3 class="page-header">
+      投票
+      <a href="{% url 'rank:eventList' %}" class="btn btn-default btn-sm" style="margin-left:20px;">戻る</a>
+    </h3>
     <h3><font id="error_zone" color="#e01010"></font></h3>
     <form action="{% url 'rank:eventVote' event_id=event_id %}" method="post" class="form-horizontal" role="form">
       {% csrf_token %}
@@ -84,11 +99,9 @@
         </select>
       {% endfor %}
 
+
       <div class="form-group">
-        <div class="col-sm-offset-2 col-sm-10">
-          <button type="submit" class="btn btn-primary" id="id_submit">送信</button>
-        </div>
+          <button type="submit" class="btn btn-primary" id="id_submit">投票</button>
       </div>
     </form>
-    <a href="{% url 'rank:eventList' %}" class="btn btn-default btn-sm">戻る</a>
 {% endblock content %}
