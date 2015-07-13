@@ -18,18 +18,11 @@ class VoteEventList(ListView):
     paginate_by = 4 # １ページは最大2件ずつでページングする
 
     def get(self, request, *args, **kwargs):
-        events = VoteEvent.objects.all()
+        events = VoteEvent.objects.all().order_by("-startTimeDate")
         self.object_list = events
 
         context = self.get_context_data(object_list=self.object_list)
         return self.render_to_response(context)
-
-def eventList(request):
-    '''書籍の一覧'''
-    event = VoteEvent.objects.all().order_by('id')
-    return render_to_response('rank/list.html',
-                                {'events':event},
-                                context_instance=RequestContext(request))
 
 
 def eventRanking(request,event_id):
@@ -118,8 +111,9 @@ def eventVote(request,event_id):
     if request.method == "POST":
         for member in members:
             value = request.POST["name_" + str(member.id)]
-            member.votes += int(value)
-            member.save()
+            if not value is "":
+                member.votes += int(value)
+                member.save()
         return redirect("rank:eventList")
 
     return render_to_response('rank/vote.html',
