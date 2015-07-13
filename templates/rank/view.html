@@ -142,7 +142,7 @@ var elmsCount = elms.length;
 for(var i=0;i<elmsCount-1;i++){
     var textElement = elms[i].children[1];
     textElement.innerHTML = dataset2[i]["名前"];
-    textElement.y = "10";
+    textElement.y = 0;
     textElement.style.fontSize = barWidth*0.3;
     textElement.style.webkitTransform = "translate("+0.03*h+"px,"+0.045*h+"px)";
 }

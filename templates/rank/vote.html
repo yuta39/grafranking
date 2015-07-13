@@ -88,6 +88,7 @@
     <form action="{% url 'rank:eventVote' event_id=event_id %}" method="post" class="form-horizontal" role="form">
       {% csrf_token %}
       {% for member in members %}
+      
         <select id="id_{{forloop.counter}}" name="name_{{member.id}}" class="selectpicker">
         <option value="0">{{member.member_name}}</option>
         <option value="1">1</option>

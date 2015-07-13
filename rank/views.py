@@ -18,7 +18,7 @@ class VoteEventList(ListView):
     paginate_by = 4 # １ページは最大2件ずつでページングする
 
     def get(self, request, *args, **kwargs):
-        events = VoteEvent.objects.all()
+        events = VoteEvent.objects.all().order_by("-startTimeDate")
         self.object_list = events
 
         context = self.get_context_data(object_list=self.object_list)
