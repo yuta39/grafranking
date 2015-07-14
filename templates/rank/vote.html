@@ -5,16 +5,9 @@
 {% block title %}投票{% endblock title %}
 
 {% block extrahead %}
-<link href="{% static 'css/bootstrap-select.min.css' %}" rel="stylesheet">
-<script src="{% static 'js/bootstrap-select.min.js' %}"></script>
+
 
 <script type="text/javascript">
-
-  var vote_point = 0;
-  var vote_point_array = [0,0,0,0,0,0,0,0,0,0,
-                          0,0,0,0,0,0,0,0,0,0,
-                          0,0,0,0,0,0,0,0,0,0];
-
 
   /*ページが読み込まれたときに実行*/
   window.onload = function(){
@@ -24,40 +17,27 @@
     elementNodeReference.style.margin = "20px";
   }
 
-  $(window).on('load', function () {
-    $('.selectpicker').selectpicker({
-        'selectedText': 'cat'
-    });
-  });
-
   {% for member in members %}
-      $(function($) {
+
+  $(function($) {
         $("#id_{{forloop.counter}}").change( function(){
           var selectVal = $("#id_{{forloop.counter}}").val();
-          before_point = getBeforePoint({{forloop.counter}},Number(selectVal));
-          vote_point -= before_point;
-          vote_point += Number(selectVal);
-          if(vote_point>5){
+          before_point = Number(selectVal);
+          if(isNaN(before_point)){
             disabledSubmitButton();
           }else{
             abledSubmitButton();
           }
         });
       });
-  {% endfor %}
 
-  function getBeforePoint(key,new_point){
-    before_point = vote_point_array[key-1];
-    vote_point_array[key-1] = new_point;
-    //console.log("getBeforePoint->" + vote_point_array)
-    return before_point
-  }
+  {% endfor %}
 
   function disabledSubmitButton(){
       var elementNodeReference = document.getElementById("id_submit");
       elementNodeReference.disabled = true;
       var errorMessage = document.getElementById("error_zone");
-      errorMessage.innerHTML = "点数を５点以内にをおさえてください";
+      errorMessage.innerHTML = "点数は半角数字で入力してください";
   }
 
   function abledSubmitButton(){
@@ -66,6 +46,7 @@
       var errorMessage = document.getElementById("error_zone");
       errorMessage.innerHTML = "";
   }
+
 
 </script>
 
@@ -88,20 +69,19 @@
     <form action="{% url 'rank:eventVote' event_id=event_id %}" method="post" class="form-horizontal" role="form">
       {% csrf_token %}
       {% for member in members %}
-      
-        <select id="id_{{forloop.counter}}" name="name_{{member.id}}" class="selectpicker">
-        <option value="0">{{member.member_name}}</option>
-        <option value="1">1</option>
-        <option value="2">2</option>
-        <option value="3">3</option>
-        <option value="4">4</option>
-        <option value="5">5</option>
+          <h4>{{member.member_name}}</h4>
+          <div class="row">
+            <label class="col-sm-1 control-label"></label>
+            <div class="col-xs-3">
+              <input type="text" class="form-control" placeholder="点数" id="id_{{forloop.counter}}" name="name_{{member.id}}">
+            </div>
+          </div>
         </select>
       {% endfor %}
 
 
       <div class="form-group">
-          <button type="submit" class="btn btn-primary" id="id_submit">投票</button>
+          <button type="submit" class="btn btn-primary" id="id_submit" onclick="hoge()">投票</button>
       </div>
     </form>
 {% endblock content %}
