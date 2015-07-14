@@ -123,7 +123,7 @@ bar.attr("y",function(d,i){ return i*(h/dataset2.length)+0.3*barWidth;})
 
 bar.transition()
     .delay(400)
-    .duration(6000)
+    .duration(10000)
     .ease("bouce")
     .attr("y",function(d,i){ return i*(h/dataset2.length)+0.3*barWidth;})
    .attr("x",function(d){ return 0;})
@@ -158,17 +158,17 @@ var svgImage = svg.selectAll("image").data(dataset2).enter().append("svg:image")
     svgImage
     .attr("x",function(d){ return xScale(d["点数"]);})
     .attr("y",function(d,i){ return i*(h/dataset2.length)+0.3*barWidth;})
-    .attr("xlink:href", "http://www.wanpug.com/illust/illust2147.png")
+    .attr("xlink:href", "")
     .attr("width",0)
     .attr("height",0);
 
     svgImage
     .transition()
-    .delay(6400)
+    .delay(10400)
     .duration(600)
     .attr("x",function(d){ return xScale(d["点数"]);})
     .attr("y",function(d,i){ return i*(h/dataset2.length)+0.3*barWidth;})
-    .attr("xlink:href", "http://www.wanpug.com/illust/illust2147.png")
+    .attr("xlink:href", "{% static 'img/star.png' %}")
     .attr("width",function(d){if(d["点数"]==dataMax){return barWidth;}else{return "0";}})
     .attr("height",barWidth);
 

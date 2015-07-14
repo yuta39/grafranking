@@ -118,6 +118,7 @@ def eventVote(request,event_id):
     if request.method == "POST":
         for member in members:
             value = request.POST["name_" + str(member.id)]
+            if value is "": continue
             member.votes += int(value)
             member.save()
         return redirect("rank:eventList")
